@@ -1,0 +1,86 @@
+package com.amq.bulbulwords.data
+
+private fun wd(
+    id: String, cat: Category, emoji: String,
+    ar: String, en: String, sound: String? = null,
+) = Word(id, cat, emoji, ar, en, sound)
+
+val WORDS_FAMILY: List<Word> = listOf(
+    wd("fm_mother", Category.FAMILY, "👩", "أم", "Mother"),
+    wd("fm_father", Category.FAMILY, "👨", "أب", "Father"),
+    wd("fm_baby", Category.FAMILY, "👶", "طفل رضيع", "Baby"),
+    wd("fm_grandfather", Category.FAMILY, "👴", "جد", "Grandfather"),
+    wd("fm_grandmother", Category.FAMILY, "👵", "جدة", "Grandmother"),
+    wd("fm_brother", Category.FAMILY, "👦", "أخ", "Brother"),
+    wd("fm_sister", Category.FAMILY, "👧", "أخت", "Sister"),
+    wd("fm_boy", Category.FAMILY, "🧒", "ولد", "Boy"),
+    wd("fm_girl", Category.FAMILY, "👧🏻", "بنت", "Girl"),
+    wd("fm_man", Category.FAMILY, "🧔", "رجل", "Man"),
+    wd("fm_woman", Category.FAMILY, "👩‍🦰", "امرأة", "Woman"),
+    wd("fm_family", Category.FAMILY, "👨‍👩‍👧‍👦", "عائلة", "Family"),
+    wd("fm_uncle", Category.FAMILY, "draw:uncle", "عم", "Uncle"),
+    wd("fm_aunt", Category.FAMILY, "draw:aunt", "عمة", "Aunt"),
+    wd("fm_couple", Category.FAMILY, "👫", "زوجان", "Couple"),
+    wd("fm_kids", Category.FAMILY, "🧑‍🤝‍🧑", "أصدقاء", "Friends"),
+    wd("fm_pregnant", Category.FAMILY, "🤰", "حامل", "Pregnant"),
+    wd("fm_cradle", Category.FAMILY, "🍼", "رضاعة", "Baby bottle"),
+)
+
+val WORDS_PLACES: List<Word> = listOf(
+    wd("pl_house", Category.PLACES, "🏠", "بيت", "House"),
+    wd("pl_school", Category.PLACES, "🏫", "مدرسة", "School"),
+    wd("pl_hospital", Category.PLACES, "🏥", "مستشفى", "Hospital"),
+    wd("pl_mosque", Category.PLACES, "🕌", "مسجد", "Mosque"),
+    wd("pl_garden", Category.PLACES, "🌷", "حديقة", "Garden"),
+    wd("pl_park", Category.PLACES, "🌳", "متنزه", "Park"),
+    wd("pl_shop", Category.PLACES, "🏪", "دكان", "Shop"),
+    wd("pl_market", Category.PLACES, "🛒", "سوق", "Market"),
+    wd("pl_farm", Category.PLACES, "🚜", "مزرعة", "Farm"),
+    wd("pl_sea", Category.PLACES, "🌊", "بحر", "Sea"),
+    wd("pl_mountain", Category.PLACES, "⛰️", "جبل", "Mountain"),
+    wd("pl_desert", Category.PLACES, "🏜️", "صحراء", "Desert"),
+    wd("pl_street", Category.PLACES, "🛣️", "شارع", "Street"),
+    wd("pl_airport", Category.PLACES, "🛫", "مطار", "Airport"),
+    wd("pl_zoo", Category.PLACES, "🦁", "حديقة حيوان", "Zoo"),
+    wd("pl_bakery", Category.PLACES, "🥖", "مخبز", "Bakery"),
+    wd("pl_kitchen", Category.PLACES, "draw:kitchen", "مطبخ", "Kitchen"),
+    wd("pl_bedroom", Category.PLACES, "draw:bedroom", "غرفة نوم", "Bedroom"),
+    wd("pl_bathroom", Category.PLACES, "draw:bathroom", "حمام", "Bathroom"),
+    wd("pl_playground", Category.PLACES, "🛝", "ملعب", "Playground"),
+    wd("pl_beach", Category.PLACES, "🏖️", "شاطئ", "Beach"),
+    wd("pl_castle", Category.PLACES, "🏰", "قلعة", "Castle"),
+    wd("pl_pharmacy", Category.PLACES, "💊", "صيدلية", "Pharmacy"),
+    wd("pl_restaurant", Category.PLACES, "🍽️", "مطعم", "Restaurant"),
+)
+
+val WORDS_FEELINGS: List<Word> = listOf(
+    wd("fe_happy", Category.FEELINGS, "😊", "سعيد", "Happy"),
+    wd("fe_sad", Category.FEELINGS, "😢", "حزين", "Sad"),
+    wd("fe_angry", Category.FEELINGS, "😠", "غاضب", "Angry"),
+    wd("fe_sleepy", Category.FEELINGS, "😴", "نعسان", "Sleepy"),
+    wd("fe_scared", Category.FEELINGS, "😨", "خائف", "Scared"),
+    wd("fe_surprised", Category.FEELINGS, "😮", "متفاجئ", "Surprised"),
+    wd("fe_laughing", Category.FEELINGS, "😂", "ضاحك", "Laughing"),
+    wd("fe_crying", Category.FEELINGS, "😭", "باكٍ", "Crying"),
+    wd("fe_love", Category.FEELINGS, "😍", "حب", "Love"),
+    wd("fe_hungry", Category.FEELINGS, "🤤", "جائع", "Hungry"),
+    wd("fe_hot", Category.FEELINGS, "🥵", "حار", "Hot"),
+    wd("fe_cold", Category.FEELINGS, "🥶", "بارد", "Cold"),
+    wd("fe_sick", Category.FEELINGS, "🤒", "مريض", "Sick"),
+    wd("fe_shy", Category.FEELINGS, "😳", "خجول", "Shy"),
+    wd("fe_proud", Category.FEELINGS, "😎", "فخور", "Proud"),
+    wd("fe_thinking", Category.FEELINGS, "🤔", "يفكر", "Thinking"),
+)
+
+val WORDS_HOME_EXTRA: List<Word> = listOf(
+    wd("hm_x_table", Category.HOME, "draw:table", "طاولة", "Table"),
+    wd("hm_x_fridge", Category.HOME, "draw:fridge", "ثلاجة", "Fridge"),
+    wd("hm_x_wardrobe", Category.HOME, "draw:wardrobe", "خزانة", "Wardrobe"),
+    wd("hm_x_carpet", Category.HOME, "draw:carpet", "سجادة", "Carpet"),
+    wd("hm_x_pillow", Category.HOME, "draw:pillow", "وسادة", "Pillow"),
+    wd("hm_x_blanket", Category.HOME, "draw:blanket", "بطانية", "Blanket"),
+    wd("hm_x_oven", Category.HOME, "draw:oven", "فرن", "Oven"),
+    wd("hm_x_washer", Category.HOME, "draw:washer", "غسالة", "Washing machine"),
+    wd("hm_x_shelf", Category.HOME, "draw:shelf", "رف", "Shelf"),
+    wd("hm_x_curtain", Category.HOME, "draw:curtain", "ستارة", "Curtain"),
+)
