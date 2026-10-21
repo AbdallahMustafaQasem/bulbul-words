@@ -20,6 +20,8 @@ object Settings {
     var dailyGoal by mutableStateOf(10)
     /** Play-session limit in minutes; 0 = no limit. */
     var playMinutes by mutableStateOf(0)
+    /** True once the parent tapped "Rate now"; the rating dialog stops appearing. */
+    var rated by mutableStateOf(false)
 
     fun init(c: Context) {
         p = c.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -32,11 +34,12 @@ object Settings {
         calm = p.getBoolean("calm", false)
         dailyGoal = p.getInt("goal", 10)
         playMinutes = p.getInt("playMin", 0)
+        rated = p.getBoolean("rated", false)
     }
 
     fun save() = p.edit()
         .putString("lang", lang.name).putBoolean("voice", voiceOn).putBoolean("sfx", sfxOn)
-        .putBoolean("showText", showText).putFloat("rate", speechRate).putString("name", childName).putBoolean("calm", calm).putInt("goal", dailyGoal).putInt("playMin", playMinutes)
+        .putBoolean("showText", showText).putFloat("rate", speechRate).putString("name", childName).putBoolean("calm", calm).putInt("goal", dailyGoal).putInt("playMin", playMinutes).putBoolean("rated", rated)
         .apply()
 }
 

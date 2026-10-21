@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amq.bulbulwords.data.Category
+import com.amq.bulbulwords.data.Ads
 import com.amq.bulbulwords.data.Lang
 import com.amq.bulbulwords.data.ParentLock
 import com.amq.bulbulwords.data.Progress
@@ -100,12 +101,17 @@ fun App(speaker: Speaker) {
             if (lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
                 seconds++
                 val limit = Settings.playMinutes
-                if (limit > 0 && seconds >= limit * 60) { locked = true; speaker.stop(); break }
+                if (limit > 0 && seconds >= limit * 60 + Ads.bonusSeconds) { locked = true; speaker.stop(); break }
             }
         }
     }
     if (locked) {
-        TimeUpScreen(onParentUnlock = { seconds = 0; locked = false })
+        val actCtx = androidx.compose.ui.platform.LocalContext.current
+        TimeUpScreen(onParentUnlock = {
+            val act = actCtx.findActivity()
+            val resume = { seconds = 0; Ads.resetBonus(); locked = false }
+            if (act != null) Ads.showRewardedInterstitial(act, resume) else resume()
+        })
         return
     }
 
@@ -134,12 +140,18 @@ fun App(speaker: Speaker) {
                     Box(Modifier.widthIn(max = 720.dp).fillMaxHeight()) { s.game.content(host) }
                 }
             }
-            is Screen.Result -> Box(Modifier.fillMaxSize().background(KidBg), contentAlignment = Alignment.TopCenter) {
-                Box(Modifier.widthIn(max = 640.dp).fillMaxHeight()) {
-                    ResultScreen(s, onAgain = { screen = Screen.Play(s.game, s.cat) }, onHome = { screen = Screen.Tabs })
+            is Screen.Result -> {
+                val resCtx = androidx.compose.ui.platform.LocalContext.current
+                LaunchedEffect(s) { resCtx.findActivity()?.let { Ads.maybeShowInterstitial(it) } }
+                Box(Modifier.fillMaxSize().background(KidBg), contentAlignment = Alignment.TopCenter) {
+                    Box(Modifier.widthIn(max = 640.dp).fillMaxHeight()) {
+                        ResultScreen(s, onAgain = { screen = Screen.Play(s.game, s.cat) }, onHome = { screen = Screen.Tabs })
+                    }
                 }
             }
         }
+        // Rating request: every launch until the parent taps "Rate now"; only on the home tabs, never mid-game.
+        if (screen is Screen.Tabs && !Settings.rated && !ratingDismissedThisLaunch) RatingDialog()
         // New-sticker celebration (never interrupts a running game).
         val fresh = Progress.justUnlocked
         if (fresh.isNotEmpty() && screen !is Screen.Play) {
@@ -168,7 +180,7 @@ private fun TabsScreen(
                     0 -> HomeTab(onLearn, speaker)
                     1 -> GamesTab(onPlay)
                     2 -> AlbumTab(speaker)
-                    else -> ParentGate { ParentTablet(speaker) }
+                    else -> ParentGate { WithBanner { ParentTablet(speaker) } }
                 }
             }
         }
@@ -180,8 +192,8 @@ private fun TabsScreen(
                 0 -> HomeTab(onLearn, speaker)
                 1 -> GamesTab(onPlay)
                 2 -> AlbumTab(speaker)
-                3 -> ParentGate { ProgressTab() }
-                else -> ParentGate { SettingsTab(speaker) }
+                3 -> ParentGate { WithBanner { ProgressTab() } }
+                else -> ParentGate { WithBanner { SettingsTab(speaker) } }
             }
         }
         Row(
@@ -202,6 +214,60 @@ private fun TabsScreen(
                 }
             }
         }
+    }
+}
+
+/** Set when "Later" is tapped, so the dialog shows once per app launch rather than on every recomposition. */
+private var ratingDismissedThisLaunch by mutableStateOf(false)
+
+@Composable
+private fun RatingDialog() {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    val en = Settings.lang == Lang.EN
+    androidx.compose.ui.window.Dialog(onDismissRequest = { ratingDismissedThisLaunch = true }) {
+        Column(
+            Modifier.clip(RoundedCornerShape(28.dp)).background(Color.White).padding(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text("⭐⭐⭐⭐⭐", fontSize = 28.sp)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                if (en) "Do you like Bulbul Words?" else "هل أعجبك بلبل الكلمات؟",
+                fontSize = 22.sp, fontWeight = FontWeight.Black, color = Ink, textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                if (en) "For parents: a rating on Google Play helps other families find the app."
+                else "للأهل: تقييمكم على Google Play يساعد أسرًا أخرى على العثور على التطبيق.",
+                color = Ink.copy(alpha = 0.75f), fontSize = 14.sp, textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                if (en) "Rate now" else "قيّم الآن",
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(50)).background(Color(0xFFFFB703)).clickable {
+                    Sfx.tap()
+                    Settings.rated = true; Settings.save()
+                    openStore(ctx, ctx.packageName)
+                }.padding(vertical = 13.dp),
+                color = Ink, fontSize = 17.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                if (en) "Later" else "لاحقًا",
+                Modifier.clip(RoundedCornerShape(50)).clickable { Sfx.tap(); ratingDismissedThisLaunch = true }
+                    .padding(horizontal = 24.dp, vertical = 10.dp),
+                color = Ink.copy(alpha = 0.65f), fontSize = 15.sp, fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+}
+
+/** Parent-area content with an adaptive banner underneath. Banners never appear on child screens. */
+@Composable
+private fun WithBanner(content: @Composable () -> Unit) {
+    Column(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(1f).fillMaxWidth()) { content() }
+        BannerAd()
     }
 }
 
@@ -563,6 +629,23 @@ private fun SettingsTab(speaker: Speaker) {
                 }
             }
         }
+        val adCtx = androidx.compose.ui.platform.LocalContext.current
+        Card2 {
+            Text("🎁 وقت لعب إضافي", fontWeight = FontWeight.Bold, color = Ink)
+            Spacer(Modifier.height(4.dp))
+            Text("للأهل فقط: شاهدوا إعلانًا قصيرًا لإضافة 10 دقائق لعب لهذه الجلسة.", color = Ink.copy(alpha = 0.7f), fontSize = 13.sp)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                if (Ads.rewardedReady) "شاهد إعلانًا (+10 دقائق)" else "الإعلان غير جاهز الآن",
+                Modifier.clip(RoundedCornerShape(50))
+                    .background(if (Ads.rewardedReady) Color(0xFF4361EE) else Color(0x14000000))
+                    .clickable(enabled = Ads.rewardedReady) {
+                        Sfx.tap()
+                        adCtx.findActivity()?.let { act -> Ads.showRewarded(act) { Ads.addBonus(600) } }
+                    }.padding(horizontal = 20.dp, vertical = 10.dp),
+                color = if (Ads.rewardedReady) Color.White else Ink.copy(alpha = 0.5f), fontWeight = FontWeight.Bold, fontSize = 14.sp,
+            )
+        }
         Card2 {
             Text("🐢 سرعة النطق", fontWeight = FontWeight.Bold, color = Ink)
             Slider(
@@ -570,6 +653,7 @@ private fun SettingsTab(speaker: Speaker) {
                 valueRange = 0.4f..1.2f, onValueChangeFinished = { Settings.save(); speaker.sayText(WordRepo.all.first().text(Settings.lang)) },
             )
         }
+        NativeAdCard()
     }
 }
 

@@ -83,7 +83,7 @@ private val DEV_APPS = listOf(
 
 private const val DEV_NAME = "Syntax Error"
 
-private fun openStore(ctx: Context, pkg: String) {
+internal fun openStore(ctx: Context, pkg: String) {
     try {
         ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$pkg")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     } catch (_: ActivityNotFoundException) {

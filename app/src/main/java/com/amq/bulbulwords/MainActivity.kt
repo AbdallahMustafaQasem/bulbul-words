@@ -26,9 +26,20 @@ class MainActivity : ComponentActivity() {
         Progress.init(applicationContext)
         com.amq.bulbulwords.data.ParentLock.init(applicationContext)
         speaker = Speaker(applicationContext)
+        com.amq.bulbulwords.data.Ads.init(applicationContext)
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) { App(speaker) }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        com.amq.bulbulwords.data.Ads.onAppForegrounded(this)
+    }
+
+    override fun onStop() {
+        com.amq.bulbulwords.data.Ads.onAppBackgrounded()
+        super.onStop()
     }
 
     override fun onDestroy() {
