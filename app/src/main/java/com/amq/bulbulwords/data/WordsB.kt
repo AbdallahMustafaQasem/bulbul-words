@@ -25,7 +25,6 @@ val WORDS_CLOTHES: List<Word> = listOf(
     w("cl_briefs", Category.CLOTHES, "🩲", "سروال داخلي", "Underwear"),
     w("cl_swimsuit", Category.CLOTHES, "🩱", "ملابس سباحة", "Swimsuit"),
     w("cl_shorts", Category.CLOTHES, "🩳", "شورت", "Shorts"),
-    w("cl_bikini", Category.CLOTHES, "👙", "بيكيني", "Bikini"),
     w("cl_kimono", Category.CLOTHES, "👘", "كيمونو", "Kimono"),
     w("cl_tie", Category.CLOTHES, "👔", "قميص رسمي", "Shirt and tie"),
     w("cl_sportshirt", Category.CLOTHES, "🎽", "قميص رياضي", "Sports shirt"),
