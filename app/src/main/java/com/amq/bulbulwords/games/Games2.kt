@@ -358,7 +358,10 @@ fun PuzzleGame(host: GameHost) {
                 fontSize = 30.sp, fontWeight = FontWeight.Black, color = Ink,
             )
             Spacer(Modifier.height(10.dp))
-            // board 2x2
+            // board 2x2. The app forces RTL, but a picture is cut left-to-right, so the board is laid out LTR
+            androidx.compose.runtime.CompositionLocalProvider(
+                androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr,
+            ) {
             Column(
                 Modifier.clip(RoundedCornerShape(24.dp)).background(Color.White).padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -398,6 +401,7 @@ fun PuzzleGame(host: GameHost) {
                         }
                     }
                 }
+            }
             }
             Spacer(Modifier.height(24.dp))
             // tray
