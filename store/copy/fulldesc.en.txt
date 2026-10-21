@@ -1,6 +1,6 @@
 Bulbul Words is a calm, colorful app that helps young children learn everyday words and practice saying them out loud. It is made for ages 2 to 5, and for any child who needs gentle, repeated practice, such as children with a speech delay.
 
-Every word appears as a clear picture and is spoken aloud, so a child can see the word, hear it and then try to say it. The whole app works offline.
+Every word appears as a clear picture and is spoken aloud, so a child can see the word, hear it and then try to say it. Words and games work offline.
 
 WORDS YOUR CHILD MEETS EVERY DAY
 - 420+ words in 15 categories: fruits, vegetables, food, clothes, animals, birds, body parts, home, transport, family, places, actions, feelings, numbers and letters
@@ -35,10 +35,10 @@ FOR PARENTS
 - Settings for language, speech speed and sounds
 
 PRIVACY
-- No ads in this version
+- Contains ads from Google AdMob, set for children: none during play, only in the parent area and after finished games
 - No accounts or sign-in
-- Works offline
-- No data is sent anywhere, and your child's progress stays on your device
+- Learning and games work offline
+- The app collects no personal information, and your child's progress stays on your device
 
 AN IMPORTANT NOTE
 Bulbul Words is an educational practice tool for use at home. It supports your child's learning and can complement the work of speech therapists and teachers, but it does not diagnose, treat or replace speech therapy or professional advice. If you are concerned about your child's speech or development, please talk to a qualified specialist.

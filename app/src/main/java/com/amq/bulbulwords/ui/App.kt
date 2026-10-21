@@ -69,6 +69,7 @@ import com.amq.bulbulwords.data.Word
 import com.amq.bulbulwords.data.Tips
 import com.amq.bulbulwords.data.WordRepo
 import com.amq.bulbulwords.games.EmojiBubble
+import com.amq.bulbulwords.games.FeedbackOverlay
 import com.amq.bulbulwords.games.Pic
 import com.amq.bulbulwords.games.GameHost
 import com.amq.bulbulwords.games.Ink
@@ -138,6 +139,7 @@ fun App(speaker: Speaker) {
                 }
                 Box(Modifier.fillMaxSize().background(KidBg), contentAlignment = Alignment.TopCenter) {
                     Box(Modifier.widthIn(max = 720.dp).fillMaxHeight()) { s.game.content(host) }
+                    FeedbackOverlay(host)
                 }
             }
             is Screen.Result -> {

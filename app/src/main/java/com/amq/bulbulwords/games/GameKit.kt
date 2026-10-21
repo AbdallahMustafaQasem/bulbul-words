@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,8 +46,22 @@ class GameHost(
     private val onFinish: (score: Int, total: Int) -> Unit,
 ) {
     fun say(w: Word) = speaker.say(w)
-    fun correct(w: Word? = null) { if (w != null) com.amq.bulbulwords.data.Progress.addPoint(w.id, 2); Sfx.success() }
-    fun wrong() = Sfx.wrong()
+    /** Last answer feedback shown by [FeedbackOverlay]: id changes on every answer; ok = correct or not. */
+    var feedbackId by androidx.compose.runtime.mutableIntStateOf(0)
+        private set
+    var feedbackOk by androidx.compose.runtime.mutableStateOf(true)
+        private set
+
+    fun correct(w: Word? = null) {
+        if (w != null) com.amq.bulbulwords.data.Progress.addPoint(w.id, 2)
+        Sfx.success()
+        feedbackOk = true; feedbackId++
+    }
+
+    fun wrong() {
+        Sfx.wrong()
+        if (!Settings.calm) { feedbackOk = false; feedbackId++ }
+    }
     fun finish(score: Int, total: Int) = onFinish(score, total)
 
     /** [n] distinct random words from the pool (pool is guaranteed to have >= 6 words). */
@@ -144,3 +160,34 @@ fun GameFrame(
 /** Adds the Arabic definite article to each word ("تفاحة خضراء" becomes "التفاحة الخضراء"). */
 fun arDef(s: String): String =
     s.trim().split(" ").filter { it.isNotEmpty() }.joinToString(" ") { w -> if (w.startsWith("ال")) w else "ال$w" }
+
+/**
+ * Big, brief answer icon drawn over every game: a green tick with stars for a correct answer, a soft
+ * orange cross for a wrong one. Lives in the host so all games show the same feedback.
+ */
+@Composable
+fun FeedbackOverlay(host: GameHost) {
+    var visible by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    androidx.compose.runtime.LaunchedEffect(host.feedbackId) {
+        if (host.feedbackId == 0) return@LaunchedEffect
+        visible = true
+        kotlinx.coroutines.delay(if (host.feedbackOk) 850 else 600)
+        visible = false
+    }
+    androidx.compose.animation.AnimatedVisibility(
+        visible,
+        enter = androidx.compose.animation.scaleIn(androidx.compose.animation.core.spring(androidx.compose.animation.core.Spring.DampingRatioMediumBouncy)) +
+            androidx.compose.animation.fadeIn(),
+        exit = androidx.compose.animation.fadeOut(),
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val ok = host.feedbackOk
+            Box(
+                Modifier.size(150.dp).clip(CircleShape)
+                    .background(if (ok) Color(0xFF2EB872) else Color(0xFFFF9F1C)),
+                contentAlignment = Alignment.Center,
+            ) { Text(if (ok) "✔" else "✖", fontSize = 84.sp, color = Color.White, fontWeight = FontWeight.Black) }
+            if (ok) Text("⭐✨", fontSize = 40.sp, modifier = Modifier.padding(bottom = 230.dp))
+        }
+    }
+}
